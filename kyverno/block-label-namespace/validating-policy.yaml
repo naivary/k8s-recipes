@@ -1,0 +1,16 @@
+apiVersion: policies.kyverno.io/v1alpha1
+kind: ValidatingPolicy
+metadata:
+  name: block-label-namespace
+spec:
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["*"]
+        apiVersions: ["*"]
+        operations: [CREATE, UPDATE]
+        resources: ["*"]
+  validations:
+    - message: "Label admin.io/* is not allowed"
+      expression: "'labels' in object.metadata ? !object.metadata.labels.exists(k, k.matches('admin.io.*')) : false"

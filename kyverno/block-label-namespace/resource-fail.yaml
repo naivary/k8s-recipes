@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: block-label-namespace-fail
+  labels:
+    admin.io/fail: "true"
+spec:
+  podSelector: {}
+  egress:
+    - {}
+  policyTypes:
+    - Egress
