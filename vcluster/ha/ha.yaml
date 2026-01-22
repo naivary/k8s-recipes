@@ -1,0 +1,13 @@
+controlPlane:
+  # Deploy etcd with 3 replicas
+  backingStore:
+    etcd:
+      deploy:
+        enabled: true
+        statefulSet:
+          highAvailability:
+            replicas: 3
+  # Deploy vCluster with 3 replicas
+  statefulSet:
+    highAvailability:
+      replicas: 3
