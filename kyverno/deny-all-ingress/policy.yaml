@@ -1,0 +1,35 @@
+apiVersion: policies.kyverno.io/v1alpha1
+kind: GeneratingPolicy
+metadata:
+  name: deny-all-ingress
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE"]
+        resources: ["namespaces"]
+  variables:
+    - name: nsName
+      expression: "object.metadata.name"
+    - name: netpol
+      expression: >-
+        [
+          {
+            "kind": dyn("NetworkPolicy"),
+            "apiVersion": dyn("networking.k8s.io/v1"),
+            "metadata": dyn({
+              "name": dyn("deny-all-ingress"),
+              "namespace": dyn(variables.nsName),
+              "labels": dyn({
+                "viridium.io/is-protected": dyn("true")
+              })
+            }),
+            "spec": dyn({
+              "podSelector": dyn({}),
+              "policyTypes": dyn(["Egress"])
+            })
+          }
+        ]
+  generate:
+    - expression: generator.Apply(variables.nsName, variables.netpol)
