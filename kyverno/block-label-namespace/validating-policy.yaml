@@ -3,6 +3,7 @@ kind: ValidatingPolicy
 metadata:
   name: block-label-namespace
 spec:
+  failurePolicy: Fail
   validationActions:
     - Deny
   matchConstraints:
@@ -12,5 +13,15 @@ spec:
         operations: [CREATE, UPDATE]
         resources: ["*"]
   validations:
-    - message: "Label admin.io/* is not allowed"
-      expression: "'labels' in object.metadata ? !object.metadata.labels.exists(k, k.matches('admin.io.*')) : false"
+    - message: "admin.io/* labels are only allowed to be set for cluster-admin users"
+      expression: >
+        (
+          has(request.userInfo.groups) &&
+          request.userInfo.groups.exists(g, g == 'cluster-admin')
+        )
+        ||
+        (
+          has(object.metadata.labels) ?
+          !object.metadata.labels.exists(k, k.matches('admin.io.*')) :
+          true
+        )
