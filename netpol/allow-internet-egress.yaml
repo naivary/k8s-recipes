@@ -3,11 +3,11 @@ kind: NetworkPolicy
 metadata:
   name: internet-egress
   labels:
-    protected: "true"
+    policy.admin.io/protected: "true"
 spec:
   podSelector:
     matchLabels:
-      networking/allow-internet-egress: "true"
+      networking.admin.io/allow-internet-egress: "true"
   egress:
     - {}
   policyTypes:

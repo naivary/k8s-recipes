@@ -22,6 +22,6 @@ spec:
         ||
         (
           has(object.metadata.labels) ?
-          !object.metadata.labels.exists(k, k.matches('admin.io.*')) :
+          !object.metadata.labels.exists(k, k.matches('*admin.io.*')) :
           true
         )

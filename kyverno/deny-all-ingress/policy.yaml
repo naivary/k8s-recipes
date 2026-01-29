@@ -10,7 +10,7 @@ spec:
         operations: ["CREATE"]
         resources: ["namespaces"]
   variables:
-    - name: nsName
+    - name: namespace
       expression: "object.metadata.name"
     - name: netpol
       expression: >-
@@ -32,4 +32,4 @@ spec:
           }
         ]
   generate:
-    - expression: generator.Apply(variables.nsName, variables.netpol)
+    - expression: generator.Apply(variables.namespace, variables.netpol)

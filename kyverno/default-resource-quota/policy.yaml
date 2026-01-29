@@ -1,0 +1,39 @@
+apiVersion: policies.kyverno.io/v1alpha1
+kind: GeneratingPolicy
+metadata:
+  name: default-resource-quota
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE"]
+        resources: ["namespaces"]
+  variables:
+    - name: namespace
+      expression: "object.metadata.name"
+    - name: resourceQuota
+      expression: >-
+        [
+          {
+            "kind": dyn("ResourceQuota"),
+            "apiVersion": dyn("v1"),
+            "metadata": dyn({
+              "name": dyn("default-resource-quota"),
+              "namespace": dyn(variables.namespace),
+              "labels": dyn({
+                "policy.admin.io/is-protected": dyn("true")
+              })
+            }),
+            "spec": dyn({
+              "hard": dyn({
+                "requests.cpu": dyn("1"),
+                "requests.memory": dyn("2Gi"),
+                "limits.cpu": dyn("4"),
+                "limits.memory": dyn("4Gi")
+              }),
+            })
+          }
+        ]
+  generate:
+    - expression: generator.Apply(variables.namespace, variables.resourceQuota)
