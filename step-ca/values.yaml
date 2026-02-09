@@ -1,4 +1,7 @@
 # Helm template
+ca:
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
 inject:
   enabled: true
   # Config contains the configuration files ca.json and defaults.json
@@ -12,6 +15,7 @@ inject:
         address: :9000
         dnsNames:
           - step-certificates.step-ca.svc.cluster.local
+          - ca.mh.com
         logger:
           format: json
         db:
@@ -20,7 +24,22 @@ inject:
         authority:
           enableAdmin: false
           provisioners:
-            - {"type":"JWK","name":"cert-manager","key":{"use":"sig","kty":"EC","kid":"4qTPbqw1m0OB3JIrAyVfbnlIA7gXIyyO68BJ3tdxZ4A","crv":"P-256","alg":"ES256","x":"raFitnitrbIlLq_9EU87u6nuzPk7vOtT3ZOFMlwrc38","y":"Z98dax7sUUT1pJjxoza_HuBdRiyZIdsqD7f3Z-n39-4"},"encryptedKey":"eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJjdHkiOiJqd2sranNvbiIsImVuYyI6IkEyNTZHQ00iLCJwMmMiOjYwMDAwMCwicDJzIjoiZHRWLUdMdDdZUHQtaE0xSlZKNTdkQSJ9.pSCi6l3iGOVZL4nS6kX3ok5w5GVl0la81AK4tQx2cVbvoDb2gh4Uqw.rO6WEWCh8vBb_qBs.Bglhl1JN6mbPG1hIyhJ9sxRougTsoZTc_wsOIo3cYHDr53gGT_IqxCpqBkP2O3ZTnokGXhyOh_GYkeydT7jOxahzbl2VY9LkfQ5UGnGIQGn9_14oZKYhDG4XwFGGZXKuiCIT-qC50uUXCpqAXqsbZ04l4X62csWScLUH-PYbHmfbwWy_kKSCofHu6y-H0EVZVj0yHyAwADi8biOhCEcQWIhRq4azTerbegxRfJs0O_aEKKWo-BmbJn-b4zJtLKJl1B7LSIGZI56A-1AOY4O5t3KfDmhEzO1k5RJ-jPdkyOb_Y7_4j3LZ4s3w19Qz0I1wZOn7oN8SkTa1oMibv_8.7FNVDde9blfDEolwLcLoxg","options":{"x509":{},"ssh":{}}}
+            - {
+                "type": "JWK",
+                "name": "jwk",
+                "key":
+                  {
+                    "use": "sig",
+                    "kty": "EC",
+                    "kid": "PojokEw2VpFmrAZuXA9_5DkhaonwYqqxXNVqed6955E",
+                    "crv": "P-256",
+                    "alg": "ES256",
+                    "x": "iRx0S0k281Qq53XqfMjQ2rsVmV4BrLRo2e4NnURORz0",
+                    "y": "B-bMgkhFmxUzznOHrvNUsw4xnDSk6Du5sowequdz_3w",
+                  },
+                "encryptedKey": "eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJjdHkiOiJqd2sranNvbiIsImVuYyI6IkEyNTZHQ00iLCJwMmMiOjYwMDAwMCwicDJzIjoiZnBfZ24wR2plcFNEOXJwYzdMeU5QdyJ9.fhJb4JGaMAZg3FoyZufRvF49h9GjqIegaI9viku_aKuPvorSjUqoKA.Ao0gERuQjPBYgvke.7UiRKyBv-Z0JZ1udsMhRmx5ZN3qpDLuxTozF78x9V1ifFmZfjQ60CyeoxGKWwlY9K1MYnaibwrTZXdgV1vojyC9Hn-B_FkDYu1H4vp3uZwDjSN13Rg2lmPePAHfxwsRrsST75mql0cGHgdmKgMBSVP2rU92ytZMpkXf2C2Q2-MfHY4vp0eK3IYWEKVwmjumKokIb_1hx0JjnaFpEHU4MNrn9d4oQuqTkjlp7vPRk7SqvdaEKBRFQNFkwnEKcmF5J4pOLD1hOkrMDV3Slrr6okyZ5Sn3kVfAaYlb_R6hc57VacBMtmprCGboup-WCngGMMzrSmJ0zw9U4qFblwoI.LvM8XtF-M2qqj_p_FGxHng",
+                "options": { "x509": {}, "ssh": {} },
+              }
         tls:
           cipherSuites:
             - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
@@ -32,63 +51,60 @@ inject:
       defaults.json:
         ca-url: https://step-certificates.step-ca.svc.cluster.local
         ca-config: /home/step/config/ca.json
-        fingerprint: 2d511c9bbac2f7b7ce37e1d79269380017e23ef02f14e53b7d74df805f95d8e2
+        fingerprint: 20e268b276c5fa80c382ff5e238eb2730d4d41418c93db21374f9940794a9e8d
         root: /home/step/certs/root_ca.crt
 
-  # Certificates contains the root and intermediate certificate and 
+  # Certificates contains the root and intermediate certificate and
   # optionally the SSH host and user public keys
   certificates:
     # intermediate_ca contains the text of the intermediate CA Certificate
     intermediate_ca: |
       -----BEGIN CERTIFICATE-----
-      MIIBzjCCAXOgAwIBAgIRAKtE38/xArDSEJGeJVD6vUIwCgYIKoZIzj0EAwIwMDES
-      MBAGA1UEChMJU21hbGxzdGVwMRowGAYDVQQDExFTbWFsbHN0ZXAgUm9vdCBDQTAe
-      Fw0yNjAyMDUxMzU1MTFaFw0zNjAyMDMxMzU1MTFaMDgxEjAQBgNVBAoTCVNtYWxs
-      c3RlcDEiMCAGA1UEAxMZU21hbGxzdGVwIEludGVybWVkaWF0ZSBDQTBZMBMGByqG
-      SM49AgEGCCqGSM49AwEHA0IABGYKvhmeD+SiPOPHIH3e6abDwpu+mYN+SELiO+lR
-      tY9cLI3koBlt5Rv8P979ZorXC9K2hlI+4aBO3fqAlRPPeY6jZjBkMA4GA1UdDwEB
-      /wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBR0fkNI/3Gc5YwH
-      J9gSPkoi8xA91DAfBgNVHSMEGDAWgBS1baWI7ZlmK+QN8PHRhy5GwNwBLjAKBggq
-      hkjOPQQDAgNJADBGAiEAxetNdY9rWWHSrr/ubF/gx/adsnZXrPOqShr2sy6JUTQC
-      IQDOJhux3QuVsh+kcmRH0LZDzY+/G0YFgBQaWkF1i+rZRQ==
+      MIIBzDCCAXKgAwIBAgIQYMTtzYiRDj2QWsu40XHIzjAKBggqhkjOPQQDAjAwMRIw
+      EAYDVQQKEwlTbWFsbHN0ZXAxGjAYBgNVBAMTEVNtYWxsc3RlcCBSb290IENBMB4X
+      DTI2MDIwNjEyNTI1MFoXDTM2MDIwNDEyNTI1MFowODESMBAGA1UEChMJU21hbGxz
+      dGVwMSIwIAYDVQQDExlTbWFsbHN0ZXAgSW50ZXJtZWRpYXRlIENBMFkwEwYHKoZI
+      zj0CAQYIKoZIzj0DAQcDQgAE0P4fpvyXHOEaOkclQ+yyA65Wf28p7zBnmuOarJxw
+      l8N6oJv2CrEyD6wxFjKlOQmdrjKsefnAOoZ5J0qeseby2aNmMGQwDgYDVR0PAQH/
+      BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFIK6wT90S3WWBUug
+      HP3hHmQB6wkeMB8GA1UdIwQYMBaAFCgRIYLOymMbaFgAx+lsOMV3dQ2JMAoGCCqG
+      SM49BAMCA0gAMEUCIBwWDZ7DsQeixteO+EjXPUf1BIa5fCR2p2pl4Lsxz/srAiEA
+      89YSt54t4Dc+KM8v5IuRReNMowM+CHFeNB+0/qrlovo=
       -----END CERTIFICATE-----
-      
-      
+
     # root_ca contains the text of the root CA Certificate
     root_ca: |
       -----BEGIN CERTIFICATE-----
-      MIIBozCCAUmgAwIBAgIQTehz51jwWcAsvjUIsNEkAjAKBggqhkjOPQQDAjAwMRIw
-      EAYDVQQKEwlTbWFsbHN0ZXAxGjAYBgNVBAMTEVNtYWxsc3RlcCBSb290IENBMB4X
-      DTI2MDIwNTEzNTUxMFoXDTM2MDIwMzEzNTUxMFowMDESMBAGA1UEChMJU21hbGxz
-      dGVwMRowGAYDVQQDExFTbWFsbHN0ZXAgUm9vdCBDQTBZMBMGByqGSM49AgEGCCqG
-      SM49AwEHA0IABKtb4maRdeofdFlrdsC10OgiiHMJhIDX9aVL86xcQKYUyv0LvLBW
-      DpKIBfWeFvG98/aNTEAi9Y91OGg1NHHKy76jRTBDMA4GA1UdDwEB/wQEAwIBBjAS
-      BgNVHRMBAf8ECDAGAQH/AgEBMB0GA1UdDgQWBBS1baWI7ZlmK+QN8PHRhy5GwNwB
-      LjAKBggqhkjOPQQDAgNIADBFAiAXFAUaBe/bYQOQ7Pqmxsz2eeCLGFwu0pBzxVY9
-      GfF03wIhAIuLJ8tAh/7Cut+bLQ3uV1SqiBUP04c0x1eqNeF1mCyx
+      MIIBpDCCAUqgAwIBAgIRAIxa+aTIJe3H/XnISgXr0BcwCgYIKoZIzj0EAwIwMDES
+      MBAGA1UEChMJU21hbGxzdGVwMRowGAYDVQQDExFTbWFsbHN0ZXAgUm9vdCBDQTAe
+      Fw0yNjAyMDYxMjUyNDlaFw0zNjAyMDQxMjUyNDlaMDAxEjAQBgNVBAoTCVNtYWxs
+      c3RlcDEaMBgGA1UEAxMRU21hbGxzdGVwIFJvb3QgQ0EwWTATBgcqhkjOPQIBBggq
+      hkjOPQMBBwNCAARf6XiJUA1bf9aYzcJ+5Mluov1nBVNaiVNQeYtGS85oLf7eTxO0
+      lE8Qm3M8cxZg4DiOecwv9keRyPjZo6khppRPo0UwQzAOBgNVHQ8BAf8EBAMCAQYw
+      EgYDVR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4EFgQUKBEhgs7KYxtoWADH6Ww4xXd1
+      DYkwCgYIKoZIzj0EAwIDSAAwRQIhAKDcw6/7pxVm29cBE0OEUN4nNt3eeioxqfhw
+      M4pfwZsLAiBd9fErjFjURJDc/iwgSluFwLXwndxS2U9zeXVGDT276Q==
       -----END CERTIFICATE-----
-      
 
   # Secrets contains the root and intermediate keys and optionally the SSH
   # private keys
   secrets:
     # ca_password contains the password used to encrypt x509.intermediate_ca_key, ssh.host_ca_key and ssh.user_ca_key
     # This value must be base64 encoded.
-    ca_password: 
-    provisioner_password: 
+    ca_password:
+    provisioner_password:
 
     x509:
       # intermediate_ca_key contains the contents of your encrypted intermediate CA key
       intermediate_ca_key: |
         -----BEGIN EC PRIVATE KEY-----
         Proc-Type: 4,ENCRYPTED
-        DEK-Info: AES-256-CBC,4113b836b409300bd3eb213a486d7d8d
-        
-        zbyShu5Rqqz2l0yR6hE5pqIhrB1y57NVvTau5PaRlU3HWvotkLd2s8dsCFzJR0aW
-        GVw419a6jqsw0hyte+NKatR8jtCQAbXylg+2dVXcvumrSzGVgYC9pYqYY4m5vrke
-        TNigAqmwXS6lCOAhkJKR7nzuT38cmDE2pangeqZr9JY=
+        DEK-Info: AES-256-CBC,f36f54eb4c6f0a44dbe57b1a2dd3479a
+
+        BG58VYXCOxjT/fnPRwtijRvxG32ulZEv8Pk/7efmm2nRsy69Ttv4NQW1eHdaBKXA
+        h1OTKGqJGGNRrxWeSZSBCpYPZedp+3D6dszd4MUmMknwXj/d+5xSoO+AXvIMvgsV
+        q6iZwpIVZhUYUsj19XVlmJQzTYpUf4I3P0CYQAQqkG8=
         -----END EC PRIVATE KEY-----
-        
 
       # root_ca_key contains the contents of your encrypted root CA key
       # Note that this value can be omitted without impacting the functionality of step-certificates
@@ -97,10 +113,9 @@ inject:
       root_ca_key: |
         -----BEGIN EC PRIVATE KEY-----
         Proc-Type: 4,ENCRYPTED
-        DEK-Info: AES-256-CBC,be567515a0790ead61649f4bee8f9e4f
-        
-        EQFTFK3SyvqJwru1TnluB6yPKzbXKADpGDhut7JqdsNAMgciSOU8LMmSMXEa1cFs
-        Vyn+4T5MtacHaAq9HdkMIOzkJGQviFyoTGUYxZcdBQrv/ox+H+63aESf7cFcehSk
-        nd1og0QlFdkiAKm+VUkYxFj+KOebDtUGV98ep+1Mc+U=
+        DEK-Info: AES-256-CBC,dd5d34480d341e6110b1b808aeb2731d
+
+        TPlvTL/IbGrAxsz1FrPi85KbLrvC2p3wyVUK4Xga8MwX5AeMTu1ClRTDM0TnWsGQ
+        li8jfeuNAeKgU5c1cKp+Z54YHu30QrCglqit0yUFoE+AmCRbtl8hX206I53CPEo4
+        OIvV+Suqmjv9RsgV36KPVSx19YALyuG2UDc57kvyonU=
         -----END EC PRIVATE KEY-----
-        

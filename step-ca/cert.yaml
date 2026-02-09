@@ -1,14 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: example-certificate
-  namespace: step-issuer
+  name: public-gateway-tls
+  namespace: kube-system
 spec:
-  secretName: backend-smallstep-com-tls
-  commonName: backend.smallstep.com
-  duration: 24h
-  renewBefore: 8h
+  duration: 24h # 90d
+  renewBefore: 12h # 15d
+  secretName: public-gateway-tls
+  dnsNames:
+    - "*.mh.com"
   issuerRef:
-    group: certmanager.step.sm
+    name: jwk
     kind: StepIssuer
-    name: step-issuer
+    group: certmanager.step.sm

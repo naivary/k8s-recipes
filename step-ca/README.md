@@ -13,7 +13,7 @@ helm install -f values.yaml -n step-ca --create-namespace \
 ```
 
 ```bash
-helm install step-issuer smallstep/step-issuer -n step-issuer
+helm install step-issuer smallstep/step-issuer --create-namespace -n step-issuer
 ```
 
 ## Install cert-manager
