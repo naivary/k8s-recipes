@@ -5,12 +5,12 @@ A collection of useful Kyverno Policies.
 ## Block Label Namespace
 
 Reserve a special label namespace for internal usage like:
-\*.<companyname>.com/\*.
+`*.<companyname>.com/*`.
 
 ## Block Operations for Label Namspace
 
 Block any operations (CREATE, REMOVE etc.) on Kubernetes Objects with your
-choosen internal namespace e.g. \*.<companyname>.com/\*.
+choosen internal namespace e.g. `*.<companyname>.com/*`.
 
 ## Restrict Image Registries
 
