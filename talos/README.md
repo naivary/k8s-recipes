@@ -78,7 +78,7 @@ After finishing the configuration process of your desired state, the
 configuration can be applied to the control plane and etcd can be bootstrapped.
 
 ```bash
-talosctl apply-config --insecure --nodes $CONTROL_PLANE_IP --file _out/controlplane.yaml
+talosctl apply-config --insecure --nodes $CONTROL_PLANE_IP --file "$OUT_DIR/controlplane.yaml"
 ```
 
 This step can be repeated multiple times to configure N control planes. Make
