@@ -1,0 +1,15 @@
+nonIdempotentAnnotations:
+  argocd.argoproj.io/compare-options: IgnoreExtraneous
+encryption:
+  enabled: true
+  type: wireguard
+  nodeEncryption: true # Beta feature in 1.18.5. Turn off if any problems occur
+kubeProxyReplacement: true
+routingMode: native
+ipv4NativeRoutingCIDR: 192.168.56.0/24
+ipam:
+  mode: kubernetes
+gatewayAPI:
+  enabled: true
+  enableAlpn: true
+  enableAppProtocol: true

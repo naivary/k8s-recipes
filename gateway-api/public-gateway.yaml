@@ -6,9 +6,9 @@ metadata:
 spec:
   gatewayClassName: cilium
   listeners:
-    - name: https
+    - name: wildcard-domain-https
       protocol: HTTPS
-      hostname: "*.mh.com"
+      hostname: "*.mh.internal"
       port: 443
       allowedRoutes:
         namespaces:
@@ -18,4 +18,4 @@ spec:
         certificateRefs:
           - group: ""
             kind: Secret
-            name: public-gateway-tls
+            name: wildcard-domain-tls

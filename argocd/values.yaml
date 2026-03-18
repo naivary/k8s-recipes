@@ -1,0 +1,16 @@
+redis-ha:
+  enabled: false
+redis:
+  enabled: false
+redisSecretInit:
+  enabled: false
+externalRedis:
+  host: "valkey.valkey.svc.cluster.local"
+controller:
+  replicas: 1
+server:
+  replicas: 2
+repoServer:
+  replicas: 2
+applicationSet:
+  replicas: 2

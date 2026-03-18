@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GRPCRoute
+metadata:
+  name: argocd-server
+  namespace: argocd
+spec:
+  parentRefs:
+    - name: public
+      sectionName: wildcard-domain-https
+      namespace: kube-system
+  hostnames:
+    - "argocd.mh.internal"
+  rules:
+    - backendRefs:
+        - name: argo-cd-argocd-server
+          namespace: argocd
+          port: 443
+      matches:
+        - headers:
+            - name: Content-Type
+              type: RegularExpression
+              value: "^application/grpc.*$"
