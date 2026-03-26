@@ -1,4 +1,4 @@
-apiVersion: policies.kyverno.io/v1alpha1
+apiVersion: policies.kyverno.io/v1
 kind: ValidatingPolicy
 metadata:
   name: block-operations-for-label-namespace
@@ -8,22 +8,20 @@ spec:
     - Deny
   matchConstraints:
     resourceRules:
-      - apiGroups: ["*"]
+      - apiGroups: ["networking.k8s.io"]
         apiVersions: ["*"]
-        operations: [UPDATE, DELETE]
         resources: ["*"]
+        operations: [UPDATE, DELETE]
   validations:
-    - message: >
-        Resources which are protected (admin.io/is-protected: true) can only be
-        updated or deleted by a cluster admin.
+    - message: "Protected resources (teccle-group.io/is-protected: true) can only be updated or deleted by a cluster-admin."
       expression: >
         (
-          has(object.metadata.labels) ? 
-          !object.metadata.labels.exists(l, l == 'admin.io/is-protected') :
+          has(oldObject.metadata.labels) ?
+          !oldObject.metadata.labels.exists(l, l == 'teccle-group.io/is-protected'):
           true
         )
         ||
         (
           has(request.userInfo.groups) &&
-          request.userInfo.groups.exists(g, g == 'cluster-admin')
+          request.userInfo.groups.exists(g, g == 'cluster-admin') || request.userInfo.groups.exists(g, g == 'kubeadm:cluster-admins')
         )
