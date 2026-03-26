@@ -1,4 +1,4 @@
-apiVersion: policies.kyverno.io/v1alpha1
+apiVersion: policies.kyverno.io/v1
 kind: ValidatingPolicy
 metadata:
   name: block-label-namespace
@@ -8,20 +8,20 @@ spec:
     - Deny
   matchConstraints:
     resourceRules:
-      - apiGroups: ["*"]
+      - apiGroups: ["networking.k8s.io"]
         apiVersions: ["*"]
         operations: [CREATE, UPDATE]
         resources: ["*"]
   validations:
-    - message: "admin.io/* labels are only allowed to be set for cluster-admin users"
+    - message: "teccle-group.io/* labels are only allowed to be set by cluster-admin users"
       expression: >
         (
-          has(request.userInfo.groups) &&
-          request.userInfo.groups.exists(g, g == 'cluster-admin')
+          has(object.metadata.labels) ?
+          object.metadata.labels.exists(k, k.matches('.*\\.teccle-group\\.io.*')) :
+          true
         )
         ||
         (
-          has(object.metadata.labels) ?
-          !object.metadata.labels.exists(k, k.matches('*admin.io.*')) :
-          true
+          has(request.userInfo.groups) &&
+          request.userInfo.groups.exists(g, g == 'cluster-admin') || request.userInfo.groups.exists(g, g == 'kubeadm:cluster-admins')
         )
