@@ -1,0 +1,9 @@
+dn: uid=admin,ou=users,dc=vfde,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: admin
+cn: Admin
+sn: Admin
+userPassword: {SSHA}wqeS18HMKi7AfDavi8UWvSQ66g2eXKII

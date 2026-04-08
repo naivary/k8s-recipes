@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldapadmin
+  namespace: default
+data:
+  LDAP_HOST: "openldap.default.svc.cluster.local"
+  LDAP_USERNAME: "cn=admin,dc=vfde,dc=com"
+  LDAP_PASSWORD: "admin"
+  LDAP_BASE_DN: "dc=vfde,dc=com"
+  LDAP_LOGIN_OBJECTCLASS: "posixAccount,inetOrgPerson"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldapadmin-dashboard
+  namespace: default
+  labels:
+    app: ldapadmin
+spec:
+  selector:
+    matchLabels:
+      app: ldapadmin
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ldapadmin
+    spec:
+      containers:
+        - name: dasboard
+          image: phpldapadmin/phpldapadmin 
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: ldapadmin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldapadmin
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: ldapadmin
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: http

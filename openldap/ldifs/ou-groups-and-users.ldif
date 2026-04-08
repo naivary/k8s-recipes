@@ -1,0 +1,9 @@
+dn: ou=groups,dc=vfde,dc=com
+ou: groups
+objectClass: top
+objectClass: organizationalUnit
+
+dn: ou=users,dc=vfde,dc=com
+ou: users
+objectClass: top
+objectClass: organizationalUnit
